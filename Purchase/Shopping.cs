@@ -85,7 +85,7 @@ namespace Purchase
             _SpecialPrice = new SpecialPrice();
             Discount _Discount = new Discount();
             _Discount.name = "Sugar";
-            _Discount.percent = 10; // assuming quantity is descending
+            _Discount.percent = 10; 
             _PriceListItem._Discount.Add(_Discount);
 
             _Content.Add(_PriceListItem);
