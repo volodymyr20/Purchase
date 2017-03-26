@@ -47,7 +47,7 @@ namespace Purchase
             // Milk
             PriceListItem _PriceListItem = new PriceListItem();
             SpecialPrice _SpecialPrice = new SpecialPrice();
-            _PriceListItem.name = "Milk";
+            _PriceListItem.name = "Milk"; // here and below - name is unique
             _SpecialPrice.quantity = 1;
             _SpecialPrice.price = 10;
             _PriceListItem._SpecialPrice.Add(_SpecialPrice);
@@ -82,10 +82,14 @@ namespace Purchase
             _SpecialPrice.price = 4;
             _PriceListItem._SpecialPrice.Add(_SpecialPrice);
 
-            _SpecialPrice = new SpecialPrice();
             Discount _Discount = new Discount();
             _Discount.name = "Sugar";
             _Discount.percent = 10; 
+            _PriceListItem._Discount.Add(_Discount);
+
+            _Discount = new Discount();
+            _Discount.name = "Bread";
+            _Discount.percent = 15;
             _PriceListItem._Discount.Add(_Discount);
 
             _Content.Add(_PriceListItem);
@@ -93,24 +97,32 @@ namespace Purchase
             // Sugar
             _PriceListItem = new PriceListItem();
             _SpecialPrice = new SpecialPrice();
-            _Discount = new Discount();
+
             _PriceListItem.name = "Sugar";
             _SpecialPrice.quantity = 1;
             _SpecialPrice.price = 15;
-
             _PriceListItem._SpecialPrice.Add(_SpecialPrice);
 
             _SpecialPrice = new SpecialPrice();
-
             _SpecialPrice.quantity = 10;
             _SpecialPrice.price = 11;
-
             _PriceListItem._SpecialPrice.Add(_SpecialPrice);
-            _PriceListItem._Discount.Add(_Discount);
 
             _SpecialPrice = new SpecialPrice();
             _SpecialPrice.quantity = 15;
             _SpecialPrice.price = 9;
+            _PriceListItem._SpecialPrice.Add(_SpecialPrice);
+
+            _Content.Add(_PriceListItem);
+
+            // Bread
+            _PriceListItem = new PriceListItem();
+            _SpecialPrice = new SpecialPrice();
+
+            _PriceListItem.name = "Bread";
+            _SpecialPrice.quantity = 1;
+            _SpecialPrice.price = 9;
+
             _PriceListItem._SpecialPrice.Add(_SpecialPrice);
 
             _Content.Add(_PriceListItem);
@@ -123,15 +135,18 @@ namespace Purchase
         public String name { get; set; }
         public Int16 quantity { get; set; }
         public float price { get; set; }
+        public bool discountApplied { get; set; }
     }
     public class Receipt
     {
         public List<ReceiptItem> _Content { get; set; }
+        public float discount { get; set; }
         public float total { get; set; }
         public Receipt()
         {
             _Content = new List<ReceiptItem>();
             total = 0;
+            discount = 0;
         }
         public Int16 AddItemToReceipt(PriceList _PriceList, String itemName)
         {
@@ -149,7 +164,7 @@ namespace Purchase
             }
             _ReceiptItem.name = itemName;
             _ReceiptItem.quantity = 1;
-
+            _ReceiptItem.discountApplied = false;
             _Content.Add(_ReceiptItem);
 
             total += _ReceiptItem.price;
@@ -182,6 +197,7 @@ namespace Purchase
             _ReceiptItem.name = itemName;
             _ReceiptItem.quantity = initialQty;
             _ReceiptItem.price = subtotal;
+            _ReceiptItem.discountApplied = false;
             _Content.Add(_ReceiptItem);
 
             return 0;
@@ -250,6 +266,43 @@ namespace Purchase
             {
                 return 0;
             }
+            public Int16 CalculateDiscount(PriceList _PriceList)
+            {
+                for (int i = 0; i < _Client._Receipt._Content.Count; i++ ) // loop through receipt items
+                {
+                    if (_Client._Receipt._Content[i].discountApplied==false) // if no discount for i-th element applied
+                    {
+                        for (int j = 0; j < _PriceList._Content.Count; j++) // search for i-th receipt element in price sheet
+                        {
+                            if ((_PriceList._Content[j].name == _Client._Receipt._Content[i].name)&&(_PriceList._Content[j]._Discount.Count>0)) // if found and there are discounts
+                            {
+                                for (int k = 0; k < _PriceList._Content[j]._Discount.Count; k++) // loop through discount items
+                                {
+                                    for (int n = 0; n < _Client._Receipt._Content.Count; n++) // look for discount item in the receipt 
+                                    {
+                                        if (_Client._Receipt._Content[n].name == _PriceList._Content[j]._Discount[k].name) // if found
+                                        {
+                                            if (_Client._Receipt._Content[i].discountApplied==false) // and discount was not applied before - go for it!
+                                            {
+                                                _Client._Receipt.discount += _Client._Receipt._Content[i].price * (_PriceList._Content[j]._Discount[k].percent/(float)100);
+                                                _Client._Receipt._Content[i].discountApplied = true;
+                                            }
+                                            if (_Client._Receipt._Content[n].discountApplied == false)
+                                            {
+                                                _Client._Receipt.discount += _Client._Receipt._Content[n].price * (_PriceList._Content[j]._Discount[k].percent/(float)100);
+                                                _Client._Receipt._Content[n].discountApplied = true;
+                                            }
+                                        }
+                                    }
+                                }
+                                _Client._Receipt.total -= _Client._Receipt.discount;
+                            }
+                        }
+                    }
+                }
+
+                return 0;
+            }
             public Int16 PrintReceipt(Client _Client)
             {
                 Console.WriteLine("RECEIPT " + DateTime.Now.ToString("h:mm:ss tt"));
@@ -261,9 +314,16 @@ namespace Purchase
                     Console.Write(_Client._Receipt._Content[j].quantity + "\t");
                     Console.WriteLine(_Client._Receipt._Content[j].price);
                 }
+                
+                if (_Client._Receipt.discount>0)
+                {
+                    Console.WriteLine("\nDiscount: " + _Client._Receipt.discount + "\n");
+                }
+                
                 Console.WriteLine("\nTOTAL: " + _Client._Receipt.total + " PLN\n");
                 return 0;
             }
+
         }
 
         class Shopping
@@ -279,7 +339,7 @@ namespace Purchase
 
                 _Casier.ScanItem(_PriceList, _PriceList._Content[0].name); // Milk 1 10 = 10
                 _Casier.ScanItem(_PriceList, _PriceList._Content[1].name, 9); // Water 8+1 4+6 = 38
-
+                _Casier.CalculateDiscount(_PriceList);
                 _Casier.PrintReceipt(_ClientJohn);
 
                 // Bill
@@ -288,7 +348,12 @@ namespace Purchase
 
                 _Casier.ScanItem(_PriceList, _PriceList._Content[2].name); // Sugar 1 15 = 15
                 _Casier.ScanItem(_PriceList, _PriceList._Content[1].name, 10); // Water 8+2 4+6 = 44
+                _Casier.ScanItem(_PriceList, _PriceList._Content[3].name); // Bread 1 9 = 9 
 
+                // total: 68
+                // discount: Sugar, Water: 10; Bread 15 - (15+44)*0.1 + 9*0.15 = 7.25
+
+                _Casier.CalculateDiscount(_PriceList);
                 _Casier.PrintReceipt(_ClientBill);
 
                 Console.ReadLine();
