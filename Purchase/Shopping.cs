@@ -10,7 +10,7 @@ This is an educational application which purpose is to implement an algorithm to
     - Discount is applied if there are discount pairs
 - then the Receipt is printed
 
-To illustrate the above mentioned algorithm a sample price list is defined in PriceList and two imaginary clients John and Smith are created in Main() function, which is in essense the application itself.
+To illustrate the above mentioned algorithm a sample price list is defined in PriceList and two imaginary clients John and Bill are created in Main() function, which is in essense the application itself.
 
 It also exposes three APIs (assuming PriceList is created, and Cashier is provided with a reference to Client):
  - float ScanItem(PriceList _PriceList, String itemName): returns the price for 1 itemName
