@@ -11,9 +11,14 @@ This is an educational application which purpose is to implement an algorithm to
 - then the Receipt is printed
 
 To illustrate the above mentioned algorithm a sample price list is defined in PriceList and two imaginary clients John and Smith are created in Main() function, which is in essense the application itself.
- 
+
+It also exposes three APIs (assuming PriceList is created, and Cashier is provided with a reference to Client):
+ - float ScanItem(PriceList _PriceList, String itemName): returns the price for 1 itemName
+ - float ScanItem(PriceList _PriceList, String itemName, Int16 qty): returns the price for qty itemNames
+ - float CalculateDiscount(PriceList _PriceList): returns the total price for Receipt
+
 PS. No error handling is implemented as no errors are expected given the scenarios this algorithm is applied below.
-  
+
 */
 
 using System;
@@ -164,7 +169,7 @@ namespace Purchase
             total = 0;
             discount = 0;
         }
-        public Int16 AddItemToReceipt(PriceList _PriceList, String itemName)
+        public float AddItemToReceipt(PriceList _PriceList, String itemName)
         {
             ReceiptItem _ReceiptItem = new ReceiptItem();
 
@@ -185,9 +190,9 @@ namespace Purchase
 
             total += _ReceiptItem.price;
 
-            return 0;
+            return _ReceiptItem.price;
         }
-        public Int16 AddItemToReceipt(PriceList _PriceList, String itemName, Int16 qty)
+        public float AddItemToReceipt(PriceList _PriceList, String itemName, Int16 qty)
         {
             IEnumerable<PriceListItem> tieredPrice = _PriceList._Content.Where(obj => (obj.name == itemName));
 
@@ -216,7 +221,7 @@ namespace Purchase
             _ReceiptItem.discountApplied = false;
             _Content.Add(_ReceiptItem);
 
-            return 0;
+            return _ReceiptItem.price;
         }
         public class Bucket
         {
@@ -264,24 +269,22 @@ namespace Purchase
         {
             public Client _Client { get; set; }
 
-            public Int16 ScanItem(PriceList _PriceList, String itemName)
+            public float ScanItem(PriceList _PriceList, String itemName)
             {
                 _Client._Bucket.AddItemToBucket(itemName);
-                _Client._Receipt.AddItemToReceipt(_PriceList, itemName);
-                return 0;
+                return _Client._Receipt.AddItemToReceipt(_PriceList, itemName);
             }
 
-            public Int16 ScanItem(PriceList _PriceList, String itemName, Int16 qty)
+            public float ScanItem(PriceList _PriceList, String itemName, Int16 qty)
             {
                 _Client._Bucket.AddItemToBucket(itemName, qty);
-                _Client._Receipt.AddItemToReceipt(_PriceList, itemName, qty);
-                return 0;
+                return _Client._Receipt.AddItemToReceipt(_PriceList, itemName, qty);
             }
             Int16 CancelItem() // TBD
             {
                 return 0;
             }
-            public Int16 CalculateDiscount(PriceList _PriceList)
+            public float CalculateDiscount(PriceList _PriceList)
             {
                 for (int i = 0; i < _Client._Receipt._Content.Count; i++ ) // loop through receipt items
                 {
@@ -315,7 +318,7 @@ namespace Purchase
                         }
                     }
                 }
-                return 0;
+                return _Client._Receipt.total;
             }
             public Int16 PrintReceipt(Client _Client)
             {
