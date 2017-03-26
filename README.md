@@ -26,14 +26,14 @@ Bread 	1 		9		9
 
 Discount pairs: 
 Sugar, Water: 10 
-Sugar, Bread 15 
+Sugar, Bread: 15 
  
 (15+44)*0.1 + 9*0.15 = 7.25
 
 Total: 60.75
 ```
 
-Expected program output: 
+Program's output: 
 
 ![alt tag](https://github.com/volodymyr20/Purchase/blob/master/output.png)
 
