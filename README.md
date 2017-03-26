@@ -4,19 +4,19 @@ Please refer to [Shopping.cs](https://github.com/volodymyr20/Purchase/blob/maste
 
 Sample input data: 
 
-John's receipt:
+**John's receipt:**
 
-Item 	Qty		Price	Subtotal
+'Item 	Qty		Price	Subtotal
 Milk 	1 		10 		10
 Water	9		8*4+1*6	38
 
 (no discount pairs)
 
-Total: 48
+Total: 48'
 
-Bill's receipt:
+**Bill's receipt:**
 
-Item 	Qty		Price	Subtotal
+'Item 	Qty		Price	Subtotal
 Sugar 	1 		15		15
 Water 	10		8*4+2*6	44
 Bread 	1 		9		9 
@@ -27,7 +27,7 @@ Sugar, Bread 15
  
 (15+44)*0.1 + 9*0.15 = 7.25
 
-Total: 60.75
+Total: 60.75'
 
 Expected program output: 
 
