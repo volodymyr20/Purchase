@@ -1,4 +1,22 @@
-﻿using System;
+﻿/*
+
+This is an educational application which purpose is to implement an algorithm to handle the following situation:
+- a Client buys goods at a shop (puts PriceListItems into Busket in terms of OOP design below)
+- Cashier scans them:
+    - price is determined based on:
+        - quantity: more he/she buys, less he/she pays, so prices are tiered with more than one tier possible
+        - discount pairs: if item A is bought together with item B it gives X% of discount; more than one pair is possible for a given item
+    - PriceListItems are added into Receipt
+    - Discount is applied if there are discount pairs
+- then the Receipt is printed
+
+To illustrate the above mentioned algorithm a sample price list is defined in PriceList and two imaginary clients John and Smith are created in Main() function, which is in essense the application itself.
+ 
+PS. No error handling is implemented as no errors are expected given the scenarios this algorithm is applied below.
+  
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +29,6 @@ namespace Purchase
     {
         public String name { get; set; }
         public Int16 percent { get; set; }
-
     }
     public class SpecialPrice
     {
@@ -126,7 +143,6 @@ namespace Purchase
             _PriceListItem._SpecialPrice.Add(_SpecialPrice);
 
             _Content.Add(_PriceListItem);
-
         }
     }
 
@@ -201,7 +217,6 @@ namespace Purchase
             _Content.Add(_ReceiptItem);
 
             return 0;
-
         }
         public class Bucket
         {
@@ -245,7 +260,7 @@ namespace Purchase
             }
         }
 
-        public class Casier
+        public class Cashier
         {
             public Client _Client { get; set; }
 
@@ -300,7 +315,6 @@ namespace Purchase
                         }
                     }
                 }
-
                 return 0;
             }
             public Int16 PrintReceipt(Client _Client)
@@ -323,7 +337,6 @@ namespace Purchase
                 Console.WriteLine("\nTOTAL: " + _Client._Receipt.total + " PLN\n");
                 return 0;
             }
-
         }
 
         class Shopping
@@ -331,30 +344,30 @@ namespace Purchase
             static void Main(string[] args)
             {
                 PriceList _PriceList = new PriceList();
-                Casier _Casier = new Casier();
+                Cashier _Cashier = new Cashier();
 
                 // John 
                 Client _ClientJohn = new Client();
-                _Casier._Client = _ClientJohn;
+                _Cashier._Client = _ClientJohn;
 
-                _Casier.ScanItem(_PriceList, _PriceList._Content[0].name); // Milk 1 10 = 10
-                _Casier.ScanItem(_PriceList, _PriceList._Content[1].name, 9); // Water 8+1 4+6 = 38
-                _Casier.CalculateDiscount(_PriceList);
-                _Casier.PrintReceipt(_ClientJohn);
+                _Cashier.ScanItem(_PriceList, _PriceList._Content[0].name); // Milk 1 10 = 10
+                _Cashier.ScanItem(_PriceList, _PriceList._Content[1].name, 9); // Water 8+1 4+6 = 38
+                _Cashier.CalculateDiscount(_PriceList);
+                _Cashier.PrintReceipt(_ClientJohn);
 
                 // Bill
                 Client _ClientBill = new Client();
-                _Casier._Client = _ClientBill;
+                _Cashier._Client = _ClientBill;
 
-                _Casier.ScanItem(_PriceList, _PriceList._Content[2].name); // Sugar 1 15 = 15
-                _Casier.ScanItem(_PriceList, _PriceList._Content[1].name, 10); // Water 8+2 4+6 = 44
-                _Casier.ScanItem(_PriceList, _PriceList._Content[3].name); // Bread 1 9 = 9 
+                _Cashier.ScanItem(_PriceList, _PriceList._Content[2].name); // Sugar 1 15 = 15
+                _Cashier.ScanItem(_PriceList, _PriceList._Content[1].name, 10); // Water 8+2 4+6 = 44
+                _Cashier.ScanItem(_PriceList, _PriceList._Content[3].name); // Bread 1 9 = 9 
 
                 // total: 68
                 // discount: Sugar, Water: 10; Bread 15 - (15+44)*0.1 + 9*0.15 = 7.25
-
-                _Casier.CalculateDiscount(_PriceList);
-                _Casier.PrintReceipt(_ClientBill);
+                
+                _Cashier.CalculateDiscount(_PriceList);
+                _Cashier.PrintReceipt(_ClientBill);
 
                 Console.ReadLine();
             }
