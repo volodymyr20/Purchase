@@ -7,9 +7,9 @@ Sample input data:
 **John's receipt:**
 
 ```
-Item 	Qty		Price	Subtotal
+Item 	Qty		Price		Subtotal
 Milk 	1 		10 		10
-Water	9		8*4+1*6	38
+Water	9		8*4+1*6		38
 
 (no discount pairs)
 
@@ -19,9 +19,9 @@ Total: 48
 **Bill's receipt:**
 
 ```
-Item 	Qty		Price	Subtotal
+Item 	Qty		Price		Subtotal
 Sugar 	1 		15		15
-Water 	10		8*4+2*6	44
+Water 	10		8*4+2*6		44
 Bread 	1 		9		9 
 
 Discount pairs: 
